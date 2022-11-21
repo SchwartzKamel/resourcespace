@@ -22,7 +22,7 @@ elseif(!$system_download_config)
 
 $export = getval("export","") != "";
 $exportcollection = getval("exportcollection",0,true);
-$obfuscate = ($system_download_config_force_obfuscation || getval("obfuscate","") !== "" || defined("SYSTEM_DOWNLOAD_CONFIG_FORCE_OBFUSCATION"));
+$obfuscate = ($system_download_config_force_obfuscation || getval("obfuscate","") !== "");
 $separatesql = getval("separatesql","") !== "";
 
 if (!isset($error) && $export!="" && enforcePostRequest(false))
@@ -38,13 +38,13 @@ if (!isset($error) && $export!="" && enforcePostRequest(false))
     
     $job_code = "system_export_" . md5($userref . $exportcollection . ($obfuscate ? "1" : "0") . ($separatesql ? "1" : "0")); // unique code for this job, used to prevent duplicate job creation.
     $jobadded=job_queue_add("config_export",$job_data,$userref,'',$lang["exportcomplete"],$lang["exportfailed"],$job_code);
-    if($jobadded == false)
+    if($jobadded!==true)
         {
-        $message = $lang["oj-creation-failure-text"];  
+        $message = $lang["oj-creation-failure-text"] . " : " . $jobadded;  
         }
     else
         {
-        $message = str_replace("%%JOBNUMBER%%",$jobadded,$lang["oj-creation-success"]); 
+        $message = $lang["oj-creation-success"];
         }
     }
 
